@@ -60,39 +60,6 @@ func (t *Topic) AnnounceSubscription(consumerName string, partitionNumber int) e
 	}
 
 	return fmt.Errorf("partition %v is already subscribed to by %v", partitionNumber, consumerName)
-
-	/*
-		// No entry exists
-		tx := t.etcd.Txn(context.TODO())
-		re, err := tx.If(
-			v3.Compare(v3.ModRevision(hb), "=", 0),
-		).Then(
-			v3.OpPut(hb, "0"), // Initialize key
-		).Commit()
-
-		if err != nil {
-			return err
-		}
-
-		if !re.Succeeded {
-			tx := t.etcd.Txn(context.TODO())
-			now := time.Now().Unix()
-			re, err := tx.If(
-				v3.Compare(v3.Value(hb), "<", fmt.Sprint(now-int64(heartbeatTimeoutSeconds))),
-			).Then(
-				v3.OpPut(hb, fmt.Sprint(now)),
-			).Commit()
-
-			if err != nil {
-				return err
-			}
-
-			if !re.Succeeded {
-				return fmt.Errorf("partition %v is already subscribed to by %v", partitionNumber, consumerName)
-			}
-		}
-		return nil
-	*/
 }
 
 func (t *Topic) SubscribeToPartition(consumerName string, partitionNumber int, offset int64) (Subscription, error) {
